@@ -11,7 +11,7 @@
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
     "crypto-js": "^4.2.0",
-    "firebase": "^11.9.1",
+    "firebase": "^10.14.1",
     "firebase-admin": "^13.4.0",
     "firebaseui": "^6.1.0",
     "framer-motion": "^12.23.0",
