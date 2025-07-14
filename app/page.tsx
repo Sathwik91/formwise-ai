@@ -1,103 +1,168 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useEffect, useState } from 'react';
+import { useAuthRedirect } from '@/lib/hooks/useAuthRedirect';
+import { motion } from 'framer-motion';
+import Lottie from 'lottie-react';
+import aiAnimation from '@/public/lottie/ai-data-flow.json';
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+export default function LandingPage() {
+  const checkingAuth = useAuthRedirect();
+
+  useEffect(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  if (checkingAuth) {
+    return <div className="min-h-screen flex items-center justify-center text-gray-500">Checking authentication...</div>;
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white scroll-smooth">
+      {/* Hero Section */}
+      <section className="grid md:grid-cols-2 gap-6 items-center justify-center text-center px-4 py-20 md:py-32 bg-gradient-to-br from-blue-100 to-white dark:from-gray-800 dark:to-gray-900">
+        <div>
+          <motion.h1
+            className="text-4xl md:text-6xl font-bold leading-tight mb-4 text-gray-800 dark:text-white"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}>
+            Turn Voice or PDF Inputs into Smart Structured Forms
+          </motion.h1>
+          <motion.p
+            className="text-lg md:text-xl max-w-2xl mx-auto mb-6 text-gray-700 dark:text-gray-300"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}>
+            Formwise-AI uses powerful AI (Gemini) to extract structured data from voice notes or messy PDFs in seconds.
+          </motion.p>
+          <motion.div
+            className="mt-8 space-x-4"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}>
+            <a href="/auth" className="bg-blue-700 text-white px-6 py-3 rounded-full shadow-md hover:bg-blue-800 transition">
+              Try Formwise-AI Now →
+            </a>
+            <a href="/demo" className="border border-blue-600 text-blue-700 dark:text-blue-400 px-6 py-3 rounded-full hover:bg-blue-100 dark:hover:bg-gray-800 transition">
+              Try Demo
+            </a>
+          </motion.div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        <motion.div
+          className="max-w-md mx-auto"
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}>
+          <Lottie animationData={aiAnimation} loop={true} />
+        </motion.div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-16 px-6 bg-blue-50 dark:bg-gray-800">
+        <div className="max-w-6xl mx-auto text-center">
+          <motion.h2
+            className="text-3xl font-bold mb-10 text-gray-800 dark:text-white"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}>
+            Why Formwise-AI?
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+            {[
+              {
+                title: '🎙️ Voice to Form',
+                desc: 'Record your voice and get structured data instantly using Google Cloud Speech + Gemini.',
+              },
+              {
+                title: '📄 Smart PDF Parsing',
+                desc: 'Upload PDFs and extract clean JSON-formatted data without manual effort.',
+              },
+              {
+                title: '⚡ Instant Results',
+                desc: 'Get results in seconds. Formwise-AI handles the heavy lifting on Google Cloud.',
+              },
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow hover:shadow-lg transition"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInUp}>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{item.title}</h3>
+                <p className="text-gray-700 dark:text-gray-300">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-20 bg-white dark:bg-gray-900 px-6">
+        <div className="max-w-5xl mx-auto text-center">
+          <motion.h2
+            className="text-3xl font-bold mb-12 text-gray-800 dark:text-white"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}>
+            How It Works
+          </motion.h2>
+          <div className="flex flex-col md:flex-row items-start justify-between gap-10 text-left">
+            {[
+              { step: '1', title: 'Upload Voice or PDF', desc: 'Drop in your input from any device or system.' },
+              { step: '2', title: 'AI Parses It', desc: 'Gemini and Google Speech-To-Text cleanly extract data.' },
+              { step: '3', title: 'Get Structured Output', desc: 'View or copy structured data immediately.' },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                className="flex-1 bg-blue-100 dark:bg-gray-800 p-6 rounded-xl shadow-sm"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInUp}>
+                <div className="text-4xl font-bold text-blue-700 dark:text-blue-400 mb-4">Step {item.step}</div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{item.title}</h3>
+                <p className="text-gray-700 dark:text-gray-300">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Get in Touch CTA */}
+      <section className="py-20 px-6 bg-gray-100 dark:bg-gray-800">
+        <motion.div
+          className="max-w-2xl mx-auto text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeInUp}>
+          <h3 className="text-3xl font-bold mb-4 text-gray-800 dark:text-white">Let’s Connect</h3>
+          <p className="mb-6 text-gray-700 dark:text-gray-300">Reach out to partner, integrate, or support us.</p>
+          <a
+            href="/contact"
+            className="inline-block bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800">
+            Get in Touch
+          </a>
+        </motion.div>
+      </section>
+    </main>
   );
 }
+// This is the main landing page for Formwise-AI, showcasing its features and how it works.
+// It uses Framer Motion for animations and Lottie for the AI animation.
