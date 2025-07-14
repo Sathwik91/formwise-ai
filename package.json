@@ -11,9 +11,9 @@
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
     "crypto-js": "^4.2.0",
-    "firebase": "^10.14.1",
+    "firebase": "10.14.1",
     "firebase-admin": "^13.4.0",
-    "firebaseui": "^6.1.0",
+    "firebaseui": "6.1.0",
     "framer-motion": "^12.23.0",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.3",
