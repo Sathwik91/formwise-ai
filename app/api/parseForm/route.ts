@@ -5,7 +5,10 @@ export async function POST(req: NextRequest) {
   const { text } = await req.json();
   console.log("🎤 Received voice text:", text);
 
-  // 🧠 Universal Prompt for Voice Form AI
+  if (!text || text.trim().length < 5) {
+    return NextResponse.json({ error: "Voice input too short or invalid." }, { status: 400 });
+  }
+
   const prompt = `
 You are an AI assistant receiving a voice-transcribed user request from a rural or urban area. 
 The person may mention their name, location, need, phone number, or extra notes in any order.
@@ -25,12 +28,18 @@ The person may mention their name, location, need, phone number, or extra notes 
 - Only output the JSON object, nothing else.
 
 🗣 Message: "${text}"
-`;
+  `.trim();
+
+  const apiKey = process.env.GEMINI_API_KEY;
+  const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+  const baseDoc = {
+    uploadType: "voice",
+    createdAt: new Date().toISOString(),
+    rawText: text,
+  };
 
   try {
-    const apiKey = process.env.GEMINI_API_KEY;
-    const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
     const geminiRes = await fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -43,27 +52,21 @@ The person may mention their name, location, need, phone number, or extra notes 
 
     const json = await geminiRes.json();
     const raw = json.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
     console.log("🧠 Gemini raw output:", raw);
 
-    const baseDoc = {
-      uploadType: "voice",
-      createdAt: new Date().toISOString(),
-      rawResponse: raw,
-      rawText: text,
-    };
-
-    // 🧹 Clean Gemini output: remove code blocks, trim
-    const cleanText = raw.replace(/```(json)?/gi, "").trim();
-    const match = cleanText.match(/\{[\s\S]*?\}/);
+    const cleanText = raw.replace(/```(json)?/gi, "").replace(/```/g, "").trim();
+    const match = cleanText.match(/\{[\s\S]*\}/);
 
     if (!match) {
       await db.collection("form_submissions").add({
         ...baseDoc,
+        rawResponse: raw,
         parsed: false,
         error: "No JSON match",
       });
 
-      return NextResponse.json({ error: "No structured JSON found", raw }, { status: 500 });
+      return NextResponse.json({ error: "AI could not parse your voice input." }, { status: 500 });
     }
 
     try {
@@ -75,26 +78,29 @@ The person may mention their name, location, need, phone number, or extra notes 
 
       await db.collection("form_submissions").add({
         ...baseDoc,
+        rawResponse: raw,
         ...parsedData,
         parsed: true,
       });
 
       return NextResponse.json(parsedData);
-    } catch (jsonError) {
-      console.error("❌ JSON parsing error:", jsonError);
+    } catch (err) {
+      console.error("❌ JSON parse error:", err);
       await db.collection("form_submissions").add({
         ...baseDoc,
+        rawResponse: raw,
         parsed: false,
         error: "Invalid JSON structure",
       });
 
-      return NextResponse.json({ error: "Invalid JSON format", raw }, { status: 500 });
+      return NextResponse.json({ error: "Invalid JSON format from Gemini." }, { status: 500 });
     }
   } catch (error: any) {
-    console.error("❌ Gemini API error:", error);
+    console.error("❌ Gemini API call failed:", error);
     return NextResponse.json(
       { error: "Gemini request failed", detail: error.message },
       { status: 500 }
     );
   }
 }
+// This code handles the POST request to parse voice input using Gemini AI. 

@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import Header from '@/components/header'
 import GoogleAnalytics from '@/app/analytics'
 import { Toaster } from 'react-hot-toast'
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -10,11 +11,11 @@ export const metadata = {
   title: 'Formwise-AI – Voice & PDF to Form',
   description: 'Turn voice recordings and PDFs into structured form data using AI.',
   keywords: ['AI forms', 'PDF parser', 'Voice to form', 'Gemini AI', 'Google Cloud'],
-  metadataBase: new URL('https://yourdomain.com'),
+  metadataBase: new URL('https://formwise-q4oedg28m-sathwiks-projects-2ca82166.vercel.app'),
   openGraph: {
     title: 'Formwise-AI',
     description: 'AI-powered structured form extraction from voice or PDF.',
-    url: 'https://yourdomain.com',
+    url: 'https://formwise-q4oedg28m-sathwiks-projects-2ca82166.vercel.app',
     siteName: 'Formwise-AI',
     images: [
       {
@@ -44,6 +45,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         <GoogleAnalytics />
+        <Analytics />
+
+        {/* Header */}
         <Header />
 
         <main className="min-h-[80vh] px-4 md:px-8 py-8 transition-all duration-300 ease-in-out">
